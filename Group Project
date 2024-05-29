@@ -1,0 +1,193 @@
+import java.util.Scanner;
+
+class Record {
+    protected String id;
+    protected String name;
+
+    public Record(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String toString() {
+        return "ID: " + id + ", Name: " + name;
+    }
+}
+
+class BookRecord extends Record {
+    private String author;
+    private String genre;
+    private boolean available;
+
+    public BookRecord(String id, String name, String author, String genre, boolean available) {
+        super(id, name);
+        this.author = author;
+        this.genre = genre;
+        this.available = available;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public String toString() {
+        return super.toString() + ", Author: " + author + ", Genre: " + genre + ", Available: " + available;
+    }
+}
+
+public class RecordManagementSystem {
+    private Record[] records;
+    private int recordCount;
+
+    public RecordManagementSystem(int capacity) {
+        records = new Record[capacity];
+        recordCount = 0;
+    }
+
+    public void addRecord(Record record) {
+        if (recordCount < records.length) {
+            records[recordCount++] = record;
+            System.out.println("Record added.");
+        } else {
+            System.out.println("No space to add new record.");
+        }
+    }
+
+    public void viewRecords() {
+        for (int i = 0; i < recordCount; i++) {
+            System.out.println(records[i]);
+        }
+    }
+
+    public Record searchRecord(String id) {
+        for (int i = 0; i < recordCount; i++) {
+            if (records[i].getId().equals(id)) {
+                return records[i];
+            }
+        }
+        return null;
+    }
+
+    public void editRecord(String id, String newName) {
+        Record record = searchRecord(id);
+        if (record != null) {
+            record.setName(newName);
+            System.out.println("Record updated.");
+        } else {
+            System.out.println("Record not found.");
+        }
+    }
+
+    public void deleteRecord(String id) {
+        for (int i = 0; i < recordCount; i++) {
+            if (records[i].getId().equals(id)) {
+                records[i] = records[recordCount - 1];
+                records[recordCount - 1] = null;
+                recordCount--;
+                System.out.println("Record deleted.");
+                return;
+            }
+        }
+        System.out.println("Record not found.");
+    }
+
+    public static void main(String[] args) {
+        RecordManagementSystem rms = new RecordManagementSystem(10);
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("\nRecord Management System Menu:");
+            System.out.println("1. Add Record");
+            System.out.println("2. View Records");
+            System.out.println("3. Search Record");
+            System.out.println("4. Edit Record");
+            System.out.println("5. Delete Record");
+            System.out.println("0. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+            
+switch (choice) {
+                case 1:
+                    System.out.print("Enter ID: ");
+                    String id = scanner.nextLine();
+                    System.out.print("Enter Name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Enter Author: ");
+                    String author = scanner.nextLine();
+                    System.out.print("Enter Genre: ");
+                    String genre = scanner.nextLine();
+                    System.out.print("Is Available (true/false): ");
+                    boolean available = scanner.nextBoolean();
+                    scanner.nextLine(); // consume newline
+                    rms.addRecord(new BookRecord(id, name, author, genre, available));
+                    break;
+                case 2:
+                    rms.viewRecords();
+                    break;
+                case 3:
+                    System.out.print("Enter ID to search: ");
+                    id = scanner.nextLine();
+                    Record record = rms.searchRecord(id);
+                    if (record != null) {
+                        System.out.println(record);
+                    } else {
+                        System.out.println("Record not found.");
+                    }
+                    break;
+                case 4:
+                    System.out.print("Enter ID to edit: ");
+                    id = scanner.nextLine();
+                    System.out.print("Enter new Name: ");
+                    name = scanner.nextLine();
+                    rms.editRecord(id, name);
+                    break;
+                case 5:
+                    System.out.print("Enter ID to delete: ");
+                    id = scanner.nextLine();
+                    rms.deleteRecord(id);
+                    break;
+                case 0:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 0);
+
+        scanner.close();
+    }
+}
